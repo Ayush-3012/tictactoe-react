@@ -1,10 +1,12 @@
-import React from "react";
+import Board from "./Board";
+import Square from "./Square";
 
 const App = () => {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <div className="app">
+      <Board />
+      <Square />
+    </div>
   );
 };
 
