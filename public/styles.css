@@ -20,6 +20,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .text-green {
@@ -88,7 +89,6 @@ button:hover {
 
 .board .board-row {
   display: flex;
-  flex-direction: row;
   border-bottom: 2px solid #fff;
 }
 .board .board-row:last-child {
