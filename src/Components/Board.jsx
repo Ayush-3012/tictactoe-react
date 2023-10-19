@@ -2,10 +2,12 @@ import Square from "./Square";
 
 const Board = (props) => {
   const renderSquare = (pos) => {
+    const isWinningSquare = props.winningSquares.includes(pos);
     return (
       <Square
         value={props.squares[pos]}
         onClick={() => props.handleSquareClick(pos)}
+        isWinningSquare={isWinningSquare}
       />
     );
   };

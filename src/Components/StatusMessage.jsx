@@ -1,8 +1,7 @@
 const StatusMessage = (props) => {
-  const noMovesLeft = props.squares.every(
-    (squareValue) => squareValue !== null
-  );
-  const nextPlayer = props.isXNext ? "X" : "0";
+  const { squares, isXNext } = props.gamingBoard;
+  const noMovesLeft = squares.every((squareValue) => squareValue !== null);
+  const nextPlayer = isXNext ? "X" : "0";
 
   const renderStatusMessage = () => {
     if (props.winner)

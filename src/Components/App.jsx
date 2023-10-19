@@ -1,36 +1,73 @@
-import Board from "./Board";
 import { useState } from "react";
-import { calculateWinner } from "./winner";
+import Board from "./Board";
 import StatusMessage from "./StatusMessage";
+import History from "./History";
+import { calculateWinner } from "./winner";
 
-const App = () => {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(false);
+const NEW_GAME = [{ squares: Array(9).fill(null), isXNext: false }];
 
-  const winner = calculateWinner(squares);
+function App() {
+  const [history, setHistory] = useState(NEW_GAME);
+  const [currentMove, setCurrentMove] = useState(0);
 
-  const handleSquareClick = (clickedPos) => {
-    if (squares[clickedPos] || winner) return;
+  const gamingBoard = history[currentMove];
 
-    setSquares((currentSquare) => {
-      return currentSquare.map((squareValue, pos) => {
-        if (clickedPos === pos) {
-          return isXNext ? "X" : "0";
+  const { winner, winningSquares } = calculateWinner(gamingBoard.squares);
+
+  const handleSquareClick = (clickedPosition) => {
+    if (gamingBoard.squares[clickedPosition] || winner) {
+      return;
+    }
+
+    setHistory((currentHistory) => {
+      const isTraversing = currentMove + 1 !== currentHistory.length;
+
+      const lastGamingState = isTraversing
+        ? currentHistory[currentMove]
+        : history[history.length - 1];
+
+      const nextSquaresState = lastGamingState.squares.map(
+        (squareValue, position) => {
+          if (clickedPosition === position) {
+            return lastGamingState.isXNext ? "X" : "O";
+          }
+          return squareValue;
         }
+      );
 
-        return squareValue;
+      const base = isTraversing
+        ? currentHistory.slice(0, currentHistory.indexOf(lastGamingState) + 1)
+        : currentHistory;
+
+      return base.concat({
+        squares: nextSquaresState,
+        isXNext: !lastGamingState.isXNext,
       });
     });
 
-    setIsXNext((currentIsXNext) => !currentIsXNext);
+    setCurrentMove((move) => move + 1);
   };
 
-  const onNewGameStart = () => {};
+  const moveTo = (move) => {
+    setCurrentMove(move);
+  };
+
+  const onNewGameStart = () => {
+    setHistory(NEW_GAME);
+    setCurrentMove(0);
+  };
 
   return (
     <div className="app">
-      <StatusMessage winner={winner} isXNext={isXNext} squares={squares} />
-      <Board squares={squares} handleSquareClick={handleSquareClick} />
+      <h1>
+        TIC <span className="text-green">TAC</span> TOE
+      </h1>
+      <StatusMessage winner={winner} gamingBoard={gamingBoard} />
+      <Board
+        squares={gamingBoard.squares}
+        handleSquareClick={handleSquareClick}
+        winningSquares={winningSquares}
+      />
 
       <button
         type="button"
@@ -39,8 +76,17 @@ const App = () => {
       >
         Start new game
       </button>
+
+      <h2
+        style={{
+          fontWeight: "normal",
+        }}
+      >
+        Current game history
+      </h2>
+      <History history={history} moveTo={moveTo} currentMove={currentMove} />
     </div>
   );
-};
+}
 
 export default App;
